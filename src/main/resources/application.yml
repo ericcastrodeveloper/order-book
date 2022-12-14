@@ -1,0 +1,5 @@
+binance:
+  api:
+    host: https://data.binance.com/api/v3/
+    trade:
+      path: /trades
