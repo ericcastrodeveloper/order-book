@@ -3,3 +3,5 @@ binance:
     host: https://data.binance.com/api/v3/
     trade:
       path: /trades
+    symbolPrice:
+      path: /ticker/price

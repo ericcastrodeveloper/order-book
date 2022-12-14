@@ -1,5 +1,6 @@
 package com.otter.labs.challenge.orderbook.controller;
 
+import com.otter.labs.challenge.orderbook.domain.SymbolPrice;
 import com.otter.labs.challenge.orderbook.domain.TradeDomain;
 import com.otter.labs.challenge.orderbook.service.BinanceService;
 import org.springframework.http.HttpStatus;
@@ -24,15 +25,27 @@ public class BinanceController {
         this.template = template;
     }
 
-    @GetMapping("/send")
-    public ResponseEntity<Void> sendMessage(@RequestParam String symbol){
+    @GetMapping("send/trades")
+    public ResponseEntity<?> sendMessage(@RequestParam String symbol){
         List<TradeDomain> response = service.getTrades(symbol);
         template.convertAndSend("/topic/trades", response);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("send/symbolPrice")
+    public ResponseEntity<?> getAveragePrice(@RequestParam String symbol){
+        SymbolPrice response = service.getPrice(symbol);
+        template.convertAndSend("/topic/symbolPrice", response);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @SendTo("/topic/trades")
     public List<TradeDomain> getTrades(@Payload List<TradeDomain> tradeDomains){
         return tradeDomains;
+    }
+
+    @SendTo("/topic/symbolPrice")
+    public SymbolPrice getSymbolPrice(@Payload SymbolPrice symbolPrice){
+        return symbolPrice;
     }
 }

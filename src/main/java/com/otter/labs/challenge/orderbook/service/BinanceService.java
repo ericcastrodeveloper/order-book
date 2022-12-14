@@ -1,5 +1,6 @@
 package com.otter.labs.challenge.orderbook.service;
 
+import com.otter.labs.challenge.orderbook.domain.SymbolPrice;
 import com.otter.labs.challenge.orderbook.domain.TradeDomain;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,8 @@ public class BinanceService {
     private String binanceAPI;
     @Value("${binance.api.trade.path}")
     private String tradePath;
+    @Value("${binance.api.symbolPrice.path}")
+    private String symbolPrice;
 
     public BinanceService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -31,5 +34,15 @@ public class BinanceService {
         return Arrays.asList(response.getBody());
         else
             return new ArrayList<>();
+    }
+
+    public SymbolPrice getPrice(String symbol) {
+        Map<String, String> params = new HashMap<>();
+        params.put("symbol", symbol);
+        ResponseEntity<SymbolPrice> response = restTemplate.exchange(binanceAPI.concat(symbolPrice) + "?symbol={symbol}", HttpMethod.GET, null, SymbolPrice.class, params);
+        if(response != null)
+            return response.getBody();
+        else
+            return new SymbolPrice();
     }
 }
